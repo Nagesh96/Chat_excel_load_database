@@ -34,21 +34,21 @@ class SecurityDetail:
             f.quit()
             return
 
-        datelist = []
         filelist = []
-        
+
         for line in filtered_files:
             parts = line.split()
             filename = parts[-1]
-            datestr = ' '.join(parts[0:2])
-            date = time.strptime(datestr, '%m-%d-%y %H:%M%p')
-            datelist.append(date)
-            filelist.append(filename)
+            # Extract the date-time part of the filename for sorting
+            date_str = filename.split('_')[-1].replace('.txt', '')
+            date = time.strptime(date_str, '%Y-%m-%d-%H-%M-%S')
+            filelist.append((date, filename))
 
-        combo = list(zip(datelist, filelist))
-        combo.sort(key=lambda x: x[0], reverse=True)
+        # Sort the files by date
+        filelist.sort(key=lambda x: x[0], reverse=True)
 
-        latest_files = [file for _, file in combo[:2]]
+        # Get the two latest files
+        latest_files = [file[1] for file in filelist[:2]]
 
         for filename in latest_files:
             with open(filename, 'wb') as f_local:
